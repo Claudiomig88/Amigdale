@@ -4,7 +4,7 @@ from psycopg2.extras import RealDictCursor
 from datetime import datetime
 from typing import List, Dict, Optional
 
-class DatabaseManager:
+class DatabaseRepository:
     def __init__(self):
         self.database_url = os.getenv('DATABASE_URL')
         if not self.database_url:

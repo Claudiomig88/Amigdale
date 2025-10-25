@@ -2,13 +2,13 @@ import requests
 import time
 import os
 from typing import Optional
-from agents.research_agent import VideoProductionState
-from utils.config import Config
-from utils.helpers import wait_for_leonardo_generation, download_file, analyze_script_for_scenes, clean_filename
+from src.pipeline.state import VideoProductionState
+from src.config import Config
+from src.utils.helpers import wait_for_leonardo_generation, download_file, analyze_script_for_scenes, clean_filename
 
 def images_agent(state: VideoProductionState) -> dict:
     script = state.get('script', '')
-    topic = state.get('topic', '')
+    topic = state.get('topic') or 'untitled'
     
     scene_prompts = analyze_script_for_scenes(script, Config.NUM_IMAGES_PER_VIDEO)
     

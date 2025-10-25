@@ -1,22 +1,10 @@
 import wikipediaapi
 from anthropic import Anthropic
-from typing import TypedDict, Optional
+from typing import Optional
 import random
-from utils.config import Config
+from src.config import Config
+from src.pipeline.state import VideoProductionState
 from anthropic.types import TextBlock
-
-class VideoProductionState(TypedDict, total=False):
-    topic: Optional[str]
-    research_data: dict
-    script: str
-    images: list
-    audio_path: str
-    music_path: str
-    video_path: str
-    youtube_id: str
-    status: str
-    error: str
-    video_id: int
 
 def research_agent(state: VideoProductionState) -> dict:
     topic = state.get('topic')

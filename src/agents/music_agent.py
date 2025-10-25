@@ -1,11 +1,11 @@
 import requests
 import os
-from agents.research_agent import VideoProductionState
-from utils.config import Config
-from utils.helpers import download_file, clean_filename
+from src.pipeline.state import VideoProductionState
+from src.config import Config
+from src.utils.helpers import download_file, clean_filename
 
 def music_agent(state: VideoProductionState) -> dict:
-    topic = state.get('topic', '')
+    topic = state.get('topic') or 'untitled'
     
     response = requests.post(
         "https://api-b2b.mubert.com/v2/RecordTrack",

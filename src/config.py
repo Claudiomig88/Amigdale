@@ -35,6 +35,11 @@ class Config:
     VIDEOS_DIR = os.path.join(DATA_DIR, "videos")
     AUDIO_DIR = os.path.join(DATA_DIR, "audio")
     IMAGES_DIR = os.path.join(DATA_DIR, "images")
+    TEMP_DIR = os.path.join(DATA_DIR, "temp")
+    CACHE_DIR = os.path.join(DATA_DIR, "cache")
+    
+    LOGS_DIR = "logs"
+    ASSETS_DIR = "assets"
     
     NUM_IMAGES_PER_VIDEO = 25
     
@@ -46,3 +51,7 @@ class Config:
         os.makedirs(Config.VIDEOS_DIR, exist_ok=True)
         os.makedirs(Config.AUDIO_DIR, exist_ok=True)
         os.makedirs(Config.IMAGES_DIR, exist_ok=True)
+        os.makedirs(Config.TEMP_DIR, exist_ok=True)
+        os.makedirs(Config.CACHE_DIR, exist_ok=True)
+        os.makedirs(Config.LOGS_DIR, exist_ok=True)
+        os.makedirs(Config.ASSETS_DIR, exist_ok=True)

@@ -1,7 +1,7 @@
 from anthropic import Anthropic
 from anthropic.types import TextBlock
-from agents.research_agent import VideoProductionState
-from utils.config import Config
+from src.pipeline.state import VideoProductionState
+from src.config import Config
 
 def script_agent(state: VideoProductionState) -> dict:
     client = Anthropic(api_key=Config.ANTHROPIC_API_KEY)

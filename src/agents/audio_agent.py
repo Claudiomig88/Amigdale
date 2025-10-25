@@ -1,14 +1,14 @@
 from openai import OpenAI
 import os
-from agents.research_agent import VideoProductionState
-from utils.config import Config
-from utils.helpers import clean_filename
+from src.pipeline.state import VideoProductionState
+from src.config import Config
+from src.utils.helpers import clean_filename
 
 def audio_agent(state: VideoProductionState) -> dict:
     client = OpenAI(api_key=Config.OPENAI_API_KEY)
     
     script = state.get('script', '')
-    topic = state.get('topic', '')
+    topic = state.get('topic') or 'untitled'
     
     topic_clean = clean_filename(topic)
     audio_path = os.path.join(Config.AUDIO_DIR, f"{topic_clean}_narration.mp3")

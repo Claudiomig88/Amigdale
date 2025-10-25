@@ -4,15 +4,15 @@ from moviepy.editor import (
 )
 import os
 import numpy as np
-from agents.research_agent import VideoProductionState
-from utils.config import Config
-from utils.helpers import clean_filename
+from src.pipeline.state import VideoProductionState
+from src.config import Config
+from src.utils.helpers import clean_filename
 
 def video_agent(state: VideoProductionState) -> dict:
     images = state.get('images', [])
     audio_path = state.get('audio_path', '')
     music_path = state.get('music_path', '')
-    topic = state.get('topic', '')
+    topic = state.get('topic') or 'untitled'
     
     audio = AudioFileClip(audio_path)
     total_duration = audio.duration

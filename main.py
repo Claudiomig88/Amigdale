@@ -2,8 +2,8 @@
 import sys
 import os
 from typing import Optional
-from workflow.langgraph_workflow import run_video_production
-from utils.config import Config
+from src.pipeline.executor import run_video_production
+from src.config import Config
 
 def main():
     Config.ensure_dirs()
