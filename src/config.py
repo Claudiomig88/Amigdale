@@ -55,3 +55,27 @@ class Config:
         os.makedirs(Config.CACHE_DIR, exist_ok=True)
         os.makedirs(Config.LOGS_DIR, exist_ok=True)
         os.makedirs(Config.ASSETS_DIR, exist_ok=True)
+
+    @staticmethod
+    def validate_api_keys():
+        """Validate that all required API keys are set"""
+        missing_keys = []
+
+        if not Config.ANTHROPIC_API_KEY:
+            missing_keys.append("ANTHROPIC_API_KEY")
+        if not Config.OPENAI_API_KEY:
+            missing_keys.append("OPENAI_API_KEY")
+        if not Config.LEONARDO_API_KEY:
+            missing_keys.append("LEONARDO_API_KEY")
+        if not Config.MUBERT_ACCESS_TOKEN:
+            missing_keys.append("MUBERT_ACCESS_TOKEN")
+        if not Config.DATABASE_URL:
+            missing_keys.append("DATABASE_URL")
+
+        if missing_keys:
+            raise ValueError(
+                f"Missing required API keys: {', '.join(missing_keys)}\n"
+                "Please set them in your .env file. See .env.example for reference."
+            )
+
+        return True

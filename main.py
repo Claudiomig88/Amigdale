@@ -7,7 +7,8 @@ from src.config import Config
 
 def main():
     Config.ensure_dirs()
-    
+    Config.validate_api_keys()
+
     topic: Optional[str]
     if len(sys.argv) > 1:
         topic = ' '.join(sys.argv[1:])

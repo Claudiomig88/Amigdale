@@ -75,12 +75,17 @@ def images_agent(state: VideoProductionState) -> dict:
 
 def upload_style_reference_if_exists(headers: dict) -> Optional[str]:
     style_image_path = None
-    for ext in ['.jpg', '.jpeg', '.png']:
-        path = f"data/style_reference_image{ext}"
-        if os.path.exists(path):
-            style_image_path = path
-            break
-    
+
+    default_path = os.path.join(Config.ASSETS_DIR, "style_reference.jpg")
+    if os.path.exists(default_path):
+        style_image_path = default_path
+    else:
+        for ext in ['.jpg', '.jpeg', '.png']:
+            path = f"data/style_reference_image{ext}"
+            if os.path.exists(path):
+                style_image_path = path
+                break
+
     if not style_image_path:
         return None
     

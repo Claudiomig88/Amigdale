@@ -1,9 +1,8 @@
 from moviepy.editor import (
-    ImageClip, AudioFileClip, CompositeVideoClip,
+    ImageClip, AudioFileClip,
     concatenate_videoclips, CompositeAudioClip
 )
 import os
-import numpy as np
 from src.pipeline.state import VideoProductionState
 from src.config import Config
 from src.utils.helpers import clean_filename
@@ -13,10 +12,13 @@ def video_agent(state: VideoProductionState) -> dict:
     audio_path = state.get('audio_path', '')
     music_path = state.get('music_path', '')
     topic = state.get('topic') or 'untitled'
-    
+
+    if not images:
+        raise ValueError("No images provided for video creation")
+
     audio = AudioFileClip(audio_path)
     total_duration = audio.duration
-    
+
     duration_per_image = total_duration / len(images)
     
     clips = []
@@ -52,32 +54,36 @@ def video_agent(state: VideoProductionState) -> dict:
         logger=None
     )
     
+    # Cleanup resources
     audio.close()
     music.close()
+    final_audio.close()
+    for clip in clips:
+        clip.close()
     video.close()
-    
+
     return {"video_path": output_path, "status": "video_ready"}
 
 def create_ken_burns_clip(image_path: str, duration: float) -> ImageClip:
     clip = ImageClip(image_path).set_duration(duration)
-    
+
     w, h = clip.size
-    
     zoom_factor = 1.2
-    
-    def zoom_in_effect(t):
-        progress = t / duration
+
+    def zoom_in_effect(get_frame, t):
+        progress = t / duration if duration > 0 else 0
         current_zoom = 1 + (zoom_factor - 1) * progress
-        
+
         new_w = int(w * current_zoom)
         new_h = int(h * current_zoom)
-        
-        return clip.resize((new_w, new_h))
-    
-    zoomed_clip = clip.fl(lambda gf, t: zoom_in_effect(t).get_frame(t), apply_to=[])
-    
+
+        resized_clip = clip.resize((new_w, new_h))
+        return resized_clip.get_frame(t)
+
+    zoomed_clip = clip.fl(zoom_in_effect)
+
     zoomed_clip = zoomed_clip.resize(height=720)
-    
+
     zoomed_clip = zoomed_clip.crossfadein(0.5).crossfadeout(0.5)
-    
+
     return zoomed_clip
