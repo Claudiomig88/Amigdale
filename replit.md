@@ -34,33 +34,46 @@ Sistema automatizzato per la creazione e pubblicazione di video educativi storic
 ## Struttura Progetto
 ```
 /
-├── agents/
-│   ├── research_agent.py
-│   ├── script_agent.py
-│   ├── images_agent.py
-│   ├── audio_agent.py
-│   ├── music_agent.py
-│   ├── video_agent.py
-│   └── upload_agent.py
-├── workflow/
-│   └── langgraph_workflow.py
-├── database/
-│   └── db_manager.py
-├── dashboard/
-│   └── app.py
-├── utils/
-│   ├── config.py
-│   └── helpers.py
-├── data/
-│   ├── videos/
-│   ├── audio/
-│   └── images/
-├── main.py
-└── requirements.txt
+├── src/                        # Codice sorgente principale
+│   ├── agents/                 # 7 agenti specializzati
+│   ├── pipeline/               # LangGraph orchestration (graph, state, executor)
+│   ├── database/               # PostgreSQL repository
+│   ├── utils/                  # Helper functions
+│   ├── services/               # API client wrappers (futuro)
+│   ├── video/                  # Video processing modules (futuro)
+│   ├── topics/                 # Topic management (futuro)
+│   ├── scheduler/              # Job scheduling (futuro)
+│   ├── notifications/          # Alert system (futuro)
+│   └── config.py               # Configurazione centralizzata
+├── data/                       # File generati (gitignored)
+│   ├── videos/                 # Video finali MP4
+│   ├── audio/                  # Narrazione + musica MP3
+│   ├── images/                 # Frame generati
+│   ├── temp/                   # File temporanei
+│   └── cache/                  # Cache API responses
+├── docs/                       # Documentazione completa
+│   ├── SETUP.md                # Guida setup
+│   ├── API_KEYS.md             # Come ottenere API keys
+│   └── ARCHITECTURE.md         # Architettura sistema
+├── logs/                       # Application logs
+├── assets/                     # Static files
+├── tests/                      # Test suite
+├── scripts/                    # Utility scripts
+├── main.py                     # Entry point CLI
+├── .env.example                # Template environment variables
+└── README.md                   # Project documentation
 ```
 
 ## Recent Changes
-- **2025-10-25**: Progetto inizializzato con struttura base e dipendenze
+- **2025-10-25 16:00**: Ristrutturazione completa a src/-based architecture
+  - Migrati tutti i moduli in src/ per migliore organizzazione
+  - Separato pipeline in graph.py, state.py, executor.py
+  - Rinominato DatabaseManager → DatabaseRepository
+  - Creata documentazione completa in docs/
+  - Risolto bug topic auto-generation nel executor
+  - Configurato workflow Video Production Bot
+  - Rimossa dashboard Flask (non più necessaria)
+- **2025-10-25 14:00**: Progetto inizializzato con struttura base e dipendenze
 
 ## API Keys Necessarie
 - `ANTHROPIC_API_KEY`: Per Claude Sonnet 4 (script e topic generation)
@@ -70,13 +83,45 @@ Sistema automatizzato per la creazione e pubblicazione di video educativi storic
 - YouTube OAuth configurato tramite Replit connector
 
 ## Configurazione
-1. Caricare immagine Character Reference in `data/style_reference_image.jpg`
-2. Configurare YouTube OAuth tramite dashboard Replit
-3. Impostare tutte le API keys come secrets
 
-## Funzionalità Dashboard
-- Visualizzazione stato pipeline in tempo reale
-- Lista video pubblicati con link YouTube
-- Tracking costi per video
-- Log errori e debugging
-- Statistiche produzione (video/giorno, topic usati)
+### Quick Start
+1. **Configura API Keys** (vedi `docs/API_KEYS.md`)
+   - ANTHROPIC_API_KEY
+   - OPENAI_API_KEY  
+   - LEONARDO_API_KEY
+   - MUBERT_CUSTOMER_ID + MUBERT_ACCESS_TOKEN
+   
+2. **Setup YouTube OAuth**
+   - Scarica `credentials.json` da Google Cloud Console
+   - Metti nella root: `/home/runner/workspace/credentials.json`
+   
+3. **Carica Style Reference** (opzionale)
+   - Carica un'immagine in `assets/style_reference.jpg`
+   - Leonardo.ai la userà per consistenza stile
+
+### Utilizzo
+
+**CLI - Topic Automatico:**
+```bash
+python main.py
+```
+
+**CLI - Topic Specifico:**
+```bash
+python main.py "Battaglia di Waterloo"
+```
+
+## Workflow LangGraph
+Flusso sequenziale:
+```
+START → research_step → script_step → images_step → 
+audio_step → music_step → video_step → upload_step → END
+```
+
+Ogni step aggiorna `VideoProductionState` con output dell'agente.
+
+## Database PostgreSQL
+Tabelle automatiche:
+- `topics`: Topic usati per evitare duplicati
+- `videos`: Metadata video pubblicati + costi
+- `production_logs`: Log dettagliato esecuzione pipeline
