@@ -11,6 +11,8 @@ def run_video_production(topic: Optional[str] = None):
     
     app = create_video_workflow()
     
+    input_topic = topic
+    
     initial_state = VideoProductionState(
         topic=topic,
         status="starting"
@@ -19,8 +21,7 @@ def run_video_production(topic: Optional[str] = None):
     if topic:
         video_id = db.create_video(topic)
     else:
-        topic = "Auto-generated"
-        video_id = db.create_video(topic)
+        video_id = db.create_video("Auto-generated")
     
     initial_state['video_id'] = video_id
     
@@ -31,7 +32,7 @@ def run_video_production(topic: Optional[str] = None):
         
         final_topic = result.get('topic', topic)
         
-        if not topic:
+        if input_topic is None:
             db.update_video(video_id, topic_name=final_topic)
         
         db.mark_topic_used(final_topic)
